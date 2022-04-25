@@ -88,5 +88,3 @@ class MentionBlot extends Embed {
 MentionBlot.blotName = "mention";
 MentionBlot.tagName = "span";
 MentionBlot.className = "mention";
-
-Quill.register(MentionBlot);

@@ -2,7 +2,7 @@ import Quill from "quill";
 
 const Embed = Quill.import("blots/embed");
 
-class MentionBlot extends Embed {
+export class MentionBlot extends Embed {
   hoverHandler;
 
   constructor(scroll, node) {
@@ -24,7 +24,7 @@ class MentionBlot extends Embed {
 
   static setDataValues(element, data) {
     const domNode = element;
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       domNode.dataset[key] = data[key];
     });
     return domNode;
@@ -36,7 +36,7 @@ class MentionBlot extends Embed {
 
   attach() {
     super.attach();
-  
+
     if (!this.mounted) {
       this.mounted = true;
       this.clickHandler = this.getClickHandler();
@@ -57,7 +57,7 @@ class MentionBlot extends Embed {
   }
 
   getClickHandler() {
-    return e => {
+    return (e) => {
       const event = this.buildEvent("mention-clicked", e);
       window.dispatchEvent(event);
       e.preventDefault();
@@ -65,21 +65,21 @@ class MentionBlot extends Embed {
   }
 
   getHoverHandler() {
-    return e => {
-      const event = this.buildEvent('mention-hovered', e);
+    return (e) => {
+      const event = this.buildEvent("mention-hovered", e);
       window.dispatchEvent(event);
       e.preventDefault();
-    }
+    };
   }
 
   buildEvent(name, e) {
-      const event = new Event(name, {
-        bubbles: true,
-        cancelable: true
-      });
-      event.value = Object.assign({}, this.domNode.dataset);
-      event.event = e;
-      return event;
+    const event = new Event(name, {
+      bubbles: true,
+      cancelable: true,
+    });
+    event.value = Object.assign({}, this.domNode.dataset);
+    event.event = e;
+    return event;
   }
 
   hoverHandler;

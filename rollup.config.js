@@ -6,60 +6,48 @@ import pkg from "./package.json";
 
 export default [
   {
-    input: "src/quill.mention.js",
+    input: "src/index.js",
     output: [
       {
         file: "docs/quill.mention.min.js",
-        format: "iife",
-        name: "quillMention",
+        format: "umd",
+        name: "QuillMention",
         plugins: [terser()],
         globals: {
-          quill: "Quill"
-        }
+          quill: "Quill",
+        },
       },
-      {
-        file: "dist/quill.mention.min.js",
-        format: "iife",
-        name: "quillMention",
-        plugins: [terser()],
-        globals: {
-          quill: "Quill"
-        }
-      }
     ],
     external: ["quill"],
     plugins: [
       localResolve(),
       babel({
-        exclude: ["node_modules/**"]
+        exclude: ["node_modules/**"],
       }),
       postcss({
         extract: true,
-        minimize: true
-      })
-    ]
+        minimize: true,
+      }),
+    ],
   },
   {
-    input: "src/quill.mention.js",
+    input: "src/index.js",
     output: [
       {
         file: pkg.main,
-        format: "cjs"
+        format: "umd",
+        name: "QuillMention",
       },
-      {
-        file: pkg.module,
-        format: "es"
-      }
     ],
     external: ["quill"],
     plugins: [
       localResolve(),
       babel({
-        exclude: ["node_modules/**"]
+        exclude: ["node_modules/**"],
       }),
       postcss({
-        extract: "quill.mention.css"
-      })
-    ]
-  }
+        extract: "quill.mention.css",
+      }),
+    ],
+  },
 ];

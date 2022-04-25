@@ -9,7 +9,7 @@ import {
 import "./quill.mention.css";
 import "./blots/mention";
 
-export class Mention {
+export default class Mention {
   constructor(quill, options) {
     this.isOpen = false;
     this.itemIndex = 0;

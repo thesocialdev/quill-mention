@@ -2,7 +2,7 @@ import Quill from "quill";
 
 const Embed = Quill.import("blots/embed");
 
-export class MentionBlot extends Embed {
+export default class MentionBlot extends Embed {
   hoverHandler;
 
   constructor(scroll, node) {

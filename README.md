@@ -20,24 +20,29 @@ https://quill-mention.com/
 Install with npm:
 
 ```bash
-npm install quill-mention --save
+npm i @deevotechvn/quill-mention
 ```
 
 Install with [Yarn](https://yarnpkg.com/en/):
 
 ```bash
-yarn add quill-mention
+yarn add @deevotechvn/quill-mention
 ```
 
 ### Import package
 
 ```javascript
-import "quill-mention";
+import { MentionBlot, Mention } from "@deevotech/quill-mention";
 // or
-require("quill-mention");
+const { MentionBlot, Mention } = require("@deevotechvn/quill-mention");
 ```
 
-Importing quill-mention automagically adds it to Quill modules.
+You will need to register the module
+
+```javascript
+Quill.register(MentionBlot);
+Quill.register("modules/mention", Mention);
+```
 
 Now you only need to pass quill-mention config to quill.
 
@@ -48,18 +53,18 @@ import "quill-mention";
 
 const atValues = [
   { id: 1, value: "Fredrik Sundqvist" },
-  { id: 2, value: "Patrik Sjölin" }
+  { id: 2, value: "Patrik Sjölin" },
 ];
 const hashValues = [
   { id: 3, value: "Fredrik Sundqvist 2" },
-  { id: 4, value: "Patrik Sjölin 2" }
+  { id: 4, value: "Patrik Sjölin 2" },
 ];
 const quill = new Quill("#editor", {
   modules: {
     mention: {
       allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
       mentionDenotationChars: ["@", "#"],
-      source: function(searchTerm, renderList, mentionChar) {
+      source: function (searchTerm, renderList, mentionChar) {
         let values;
 
         if (mentionChar === "@") {
@@ -79,16 +84,29 @@ const quill = new Quill("#editor", {
               matches.push(values[i]);
           renderList(matches, searchTerm);
         }
-      }
-    }
-  }
+      },
+    },
+  },
 });
 ```
 
 ### Hover and Click Example
+
 ```javascript
-  window.addEventListener('mention-hovered', (event) => {console.log('hovered: ', event)}, false);
-  window.addEventListener('mention-clicked', (event) => {console.log('hovered: ', event)}, false);
+window.addEventListener(
+  "mention-hovered",
+  (event) => {
+    console.log("hovered: ", event);
+  },
+  false
+);
+window.addEventListener(
+  "mention-clicked",
+  (event) => {
+    console.log("hovered: ", event);
+  },
+  false
+);
 ```
 
 ### Async example
@@ -98,14 +116,14 @@ async function suggestPeople(searchTerm) {
   const allPeople = [
     {
       id: 1,
-      value: "Fredrik Sundqvist"
+      value: "Fredrik Sundqvist",
     },
     {
       id: 2,
-      value: "Patrik Sjölin"
-    }
+      value: "Patrik Sjölin",
+    },
   ];
-  return allPeople.filter(person => person.value.includes(searchTerm));
+  return allPeople.filter((person) => person.value.includes(searchTerm));
 }
 
 const quill = new Quill("#editor", {
@@ -113,12 +131,12 @@ const quill = new Quill("#editor", {
     mention: {
       allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
       mentionDenotationChars: ["@", "#"],
-      source: async function(searchTerm, renderList) {
+      source: async function (searchTerm, renderList) {
         const matchedPeople = await suggestPeople(searchTerm);
         renderList(matchedPeople);
-      }
-    }
-  }
+      },
+    },
+  },
 });
 ```
 
@@ -134,44 +152,44 @@ const quill = new Quill("#editor", {
     mention: {
       allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
       mentionDenotationChars: ["@", "#"],
-      source: function(searchTerm, renderList, mentionChar) {
+      source: function (searchTerm, renderList, mentionChar) {
         // some source implementation
-      }
-    }
-  }
+      },
+    },
+  },
 });
 ```
 
 ### Settings
 
-| Property                                      | Default                                                      | Description                                                  |
-| --------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `source(searchTerm, renderList, mentionChar)` | `null`                                                       | Required callback function to handle the search term and connect it to a data source for matches. The data source can be a local source or an AJAX request. The callback should call `renderList(matches, searchTerm);` with matches of JSON Objects in an array to show the result for the user. The JSON Objects should have `id` and `value` but can also have other values to be used in `renderItem` for custom display. |
-| `renderItem(item, searchTerm)`                | `function`                                                   | A function that gives you control over how matches from source are displayed. You can use this function to highlight the search term or change the design with custom HTML. |
-| `allowedChars`                                | `[a-zA-Z0-9_]` (or `function`)                               | Allowed characters in search term triggering a search request using regular expressions.  Can be a function that takes the denotationChar and returns a regex. |
-| `minChars`                                    | `0`                                                          | Minimum number of characters after the @ symbol triggering a search request |
-| `maxChars`                                    | `31`                                                         | Maximum number of characters after the @ symbol triggering a search request |
-| `offsetTop`                                   | `2`                                                          | Additional top offset of the mention container position      |
-| `offsetLeft`                                  | `0`                                                          | Additional left offset of the mention container position     |
-| `mentionDenotationChars`                      | `["@"]`                                                      | Specifies which characters will cause the mention autocomplete to open |
-| `isolateCharacter`                            | `false`                                                      | Whether or not the denotation character(s) should be isolated. For example, to avoid mentioning in an email. |
-| `fixMentionsToQuill`                          | `false`                                                      | When set to true, the mentions menu will be rendered above or below the quill container. Otherwise, the mentions menu will track the denotation character(s); |
-| `showDenotationChar`                          | `true`                                                       | Whether to show the used denotation character in the mention item or not |
-| `defaultMenuOrientation`                      | `'bottom'`                                                   | Options are `'bottom'` and `'top'`. Determines what the default orientation of the menu will be. Quill-mention will attempt to render the menu either above or below the editor. If `'top'` is provided as a value, and there is not enough space above the editor, the menu will be rendered below. Vice versa, if there is not enough space below the editor, and `'bottom'` is provided as a value (or no value is provided at all), the menu will be rendered above the editor. |
-| `blotName`                                    | `'mention'`                                                  | The name of the [Quill Blot](https://github.com/quilljs/parchment#blots) to be used for inserted mentions. A default implementation is provided named 'mention', which may be overidden with a custom blot. |
-| `dataAttributes`                              | `['id', 'value', 'denotationChar', 'link', 'target','disabled']` | A list of data values you wish to be passed from your list data to the html node. (`id, value, denotationChar, link, target` are included by default). |
-| `onOpen`                                      | `function`                                                   | Callback when mention dropdown is open.                      |
-| `onBeforeClose`                               | `function`                                                   | Callback before the DOM of mention dropdown is removed.      |
-| `onClose`                                     | `function`                                                   | Callback when mention dropdown is closed.                    |
-| `onSelect(item, insertItem)`                  | `function`                                                   | Callback for a selected item. When overriding this method, `insertItem` should be used to insert `item` to the editor. This makes async requests possible. |
-| `linkTarget`                                  | `'_blank'`                                                   | Link target for mentions with a link                         |
-| `listItemClass`                               | `'ql-mention-list-item'`                                     | Style class to be used for list items (may be null)          |
-| `mentionContainerClass`                       | `'ql-mention-list-container'`                                | Style class to be used for the mention list container (may be null) |
-| `mentionListClass`                            | `'ql-mention-list'`                                          | Style class to be used for the mention list (may be null)    |
-| `spaceAfterInsert`                            | `true`                                                       | Whether or not insert 1 space after mention block in text    |
-| `positioningStrategy`                         | `'absolute'`                                                 | Options are `'normal'` and `'fixed'`. When `'fixed'`, the menu will be appended to the body and use fixed positioning. Use this if the menu is clipped by a parent element that's using `overflow:hidden|scroll`. |
-| `renderLoading`                               | `function`                                                   | A function that returns the HTML for a loading message during async calls from `source`. The default functions returns `null` to prevent a loading message. |
-| `selectKeys`                                  | `[13]`                                                       | An array of keyboard key codes that will trigger the select action for the mention dropdown. Default is ENTER key. See [this reference](http://gcctech.org/csc/javascript/javascript_keycodes.htm) for a list of numbers for each keyboard key. |
+| Property                                      | Default                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| --------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `source(searchTerm, renderList, mentionChar)` | `null`                                                           | Required callback function to handle the search term and connect it to a data source for matches. The data source can be a local source or an AJAX request. The callback should call `renderList(matches, searchTerm);` with matches of JSON Objects in an array to show the result for the user. The JSON Objects should have `id` and `value` but can also have other values to be used in `renderItem` for custom display.                                                       |
+| `renderItem(item, searchTerm)`                | `function`                                                       | A function that gives you control over how matches from source are displayed. You can use this function to highlight the search term or change the design with custom HTML.                                                                                                                                                                                                                                                                                                         |
+| `allowedChars`                                | `[a-zA-Z0-9_]` (or `function`)                                   | Allowed characters in search term triggering a search request using regular expressions. Can be a function that takes the denotationChar and returns a regex.                                                                                                                                                                                                                                                                                                                       |
+| `minChars`                                    | `0`                                                              | Minimum number of characters after the @ symbol triggering a search request                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `maxChars`                                    | `31`                                                             | Maximum number of characters after the @ symbol triggering a search request                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `offsetTop`                                   | `2`                                                              | Additional top offset of the mention container position                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `offsetLeft`                                  | `0`                                                              | Additional left offset of the mention container position                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `mentionDenotationChars`                      | `["@"]`                                                          | Specifies which characters will cause the mention autocomplete to open                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `isolateCharacter`                            | `false`                                                          | Whether or not the denotation character(s) should be isolated. For example, to avoid mentioning in an email.                                                                                                                                                                                                                                                                                                                                                                        |
+| `fixMentionsToQuill`                          | `false`                                                          | When set to true, the mentions menu will be rendered above or below the quill container. Otherwise, the mentions menu will track the denotation character(s);                                                                                                                                                                                                                                                                                                                       |
+| `showDenotationChar`                          | `true`                                                           | Whether to show the used denotation character in the mention item or not                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `defaultMenuOrientation`                      | `'bottom'`                                                       | Options are `'bottom'` and `'top'`. Determines what the default orientation of the menu will be. Quill-mention will attempt to render the menu either above or below the editor. If `'top'` is provided as a value, and there is not enough space above the editor, the menu will be rendered below. Vice versa, if there is not enough space below the editor, and `'bottom'` is provided as a value (or no value is provided at all), the menu will be rendered above the editor. |
+| `blotName`                                    | `'mention'`                                                      | The name of the [Quill Blot](https://github.com/quilljs/parchment#blots) to be used for inserted mentions. A default implementation is provided named 'mention', which may be overidden with a custom blot.                                                                                                                                                                                                                                                                         |
+| `dataAttributes`                              | `['id', 'value', 'denotationChar', 'link', 'target','disabled']` | A list of data values you wish to be passed from your list data to the html node. (`id, value, denotationChar, link, target` are included by default).                                                                                                                                                                                                                                                                                                                              |
+| `onOpen`                                      | `function`                                                       | Callback when mention dropdown is open.                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `onBeforeClose`                               | `function`                                                       | Callback before the DOM of mention dropdown is removed.                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `onClose`                                     | `function`                                                       | Callback when mention dropdown is closed.                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `onSelect(item, insertItem)`                  | `function`                                                       | Callback for a selected item. When overriding this method, `insertItem` should be used to insert `item` to the editor. This makes async requests possible.                                                                                                                                                                                                                                                                                                                          |
+| `linkTarget`                                  | `'_blank'`                                                       | Link target for mentions with a link                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `listItemClass`                               | `'ql-mention-list-item'`                                         | Style class to be used for list items (may be null)                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `mentionContainerClass`                       | `'ql-mention-list-container'`                                    | Style class to be used for the mention list container (may be null)                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `mentionListClass`                            | `'ql-mention-list'`                                              | Style class to be used for the mention list (may be null)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `spaceAfterInsert`                            | `true`                                                           | Whether or not insert 1 space after mention block in text                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `positioningStrategy`                         | `'absolute'`                                                     | Options are `'normal'` and `'fixed'`. When `'fixed'`, the menu will be appended to the body and use fixed positioning. Use this if the menu is clipped by a parent element that's using `overflow:hidden                                                                                                                                                                                                                                                                            | scroll`. |
+| `renderLoading`                               | `function`                                                       | A function that returns the HTML for a loading message during async calls from `source`. The default functions returns `null` to prevent a loading message.                                                                                                                                                                                                                                                                                                                         |
+| `selectKeys`                                  | `[13]`                                                           | An array of keyboard key codes that will trigger the select action for the mention dropdown. Default is ENTER key. See [this reference](http://gcctech.org/csc/javascript/javascript_keycodes.htm) for a list of numbers for each keyboard key.                                                                                                                                                                                                                                     |
 
 ### Methods
 

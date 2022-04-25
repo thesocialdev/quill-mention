@@ -1,10 +1,10 @@
 {
   "name": "@deevotechvn/quill-mention",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "@mentions for the Quill rich text editor",
   "homepage": "https://quill-mention.com/",
-  "main": "dist/quill.mention.csj.js",
-  "module": "dist/quill.mention.esm.js",
+  "main": "dist/quill.mention.min.js",
+  "types": "index.d.ts",
   "repository": "https://github.com/DeevotechVN/quill-mention.git",
   "author": "Fredrik Sundqvist <fsundqvist@gmail.com>",
   "license": "MIT",

@@ -1,5 +1,7 @@
 ![Quill Mention](docs/static/quill-mention.png "Quill Mention")
 
+**This is a fork to allow Quill-Mention to run with quill@2.0.0-dev3**
+
 # Quill Mention
 
 [![npm version](https://badge.fury.io/js/quill-mention.svg)](https://badge.fury.io/js/quill-mention)
